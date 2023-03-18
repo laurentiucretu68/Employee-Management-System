@@ -1,0 +1,26 @@
+{
+  "name": "proiect",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "nodemon --watch 'app.ts' --exec 'ts-node' app.ts"
+  },
+  "keywords": [],
+  "author": "Laurentiu Vasile Cretu - laurentiucretu13@gmail.com",
+  "license": "ISC",
+  "dependencies": {
+    "@cloudamqp/amqp-client": "^2.1.1",
+    "@fastify/auth": "^4.2.0",
+    "@fastify/jwt": "^6.7.1",
+    "@fastify/swagger": "^8.3.1",
+    "@fastify/swagger-ui": "^1.5.0",
+    "@types/node": "^18.15.3",
+    "amqplib": "^0.10.3",
+    "dotenv": "^16.0.3",
+    "fastify": "^4.14.1",
+    "ioredis": "^5.3.1",
+    "mongoose": "^7.0.2",
+    "ts-token-generator": "^1.0.4"
+  }
+}
