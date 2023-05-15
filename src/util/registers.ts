@@ -4,6 +4,7 @@ import "@fastify/jwt";
 import { FastifyInstance } from "fastify";
 import { employeeRouter } from "../routes/employeeRouter";
 import { departmentRouter } from "../routes/departmentRouter";
+import {pendingLeaveRouter} from "../routes/pendingLeaveRouter";
 import { IAdmin } from "../model/admin";
 import { IEmployee } from "../model/employee";
 
@@ -45,4 +46,5 @@ export async function fastifyRegisters(fastify: FastifyInstance) {
     // Routes
     fastify.register(employeeRouter);
     fastify.register(departmentRouter);
+    fastify.register(pendingLeaveRouter)
 }

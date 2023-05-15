@@ -1,13 +1,28 @@
 "use strict";
 
+
+const stringType = {
+    type: "string"
+}
+const numberType = {
+    type: "number"
+}
+const uuidType = {
+    type: "string",
+    pattern: "^[0-9a-fA-F]{8}\\b-[0-9a-fA-F]{4}\\b-[0-9a-fA-F]{4}\\b-[0-9a-fA-F]{4}\\b-[0-9a-fA-F]{12}$"
+}
+
+const emailType = {
+    type: "string",
+    format: "email"
+}
+
 export const schema = {
     "/employee": {
         params: {
             type: "object",
             properties: {
-                id: {
-                    type: "string"
-                }
+                id: uuidType
             },
             required: ["id"]
         }
@@ -27,47 +42,37 @@ export const schema = {
         body: {
             type: "object",
             properties: {
-                name: { type: "string" },
-                email: {
-                    type: "string",
-                    format: "email"
-                },
-                password: { type: "string" },
-                age: {
-                    type: "number",
-                    minimum: 18
-                },
-                phoneNumber: { type: "string" },
-                department: { type: "string" }
+                name: stringType,
+                email: emailType,
+                password: stringType,
+                birthDate: numberType,
+                phoneNumber: stringType,
+                department: stringType,
+                address: stringType,
+                daysOff: numberType
             },
-            required: ["name", "email", "password", "age", "phoneNumber", "department"]
+            required: ["name", "email", "password", "birthDate", "phoneNumber", "department", "address", "daysOff"]
         }
     },
     "/employee/update": {
         params: {
             type: "object",
             properties: {
-                id: {
-                    type: "string"
-                }
+                id: uuidType
             },
             required: ["id"]
         },
         body: {
             type: "object",
             properties: {
-                name: { type: "string" },
-                email: {
-                    type: "string",
-                    format: "email"
-                },
-                password: { type: "string" },
-                age: {
-                    type: "number",
-                    minimum: 18
-                },
-                phoneNumber: { type: "string" },
-                department: { type: "string" }
+                name: stringType,
+                email: emailType,
+                password: stringType,
+                birthDate: numberType,
+                phoneNumber: stringType,
+                department: stringType,
+                address: stringType,
+                daysOff: numberType
             }
         }
     },
@@ -75,11 +80,8 @@ export const schema = {
         body: {
             type: "object",
             properties: {
-                email: {
-                    type: "string",
-                    format: "email"
-                },
-                password: { type: "string" },
+                email: emailType,
+                password: stringType,
             },
             required: ["email", "password"]
         }
@@ -88,21 +90,100 @@ export const schema = {
         params: {
             type: "object",
             properties: {
-                email: {
-                    type: "string",
-                    format: "email"
-                }
+                email: emailType
             },
             required: ["email"]
         }
     },
+    "/employee/logout": {
+        body: {
+            type: "object",
+            properties: {
+                email: emailType
+            },
+            required: ["email"]
+        }
+    },
+
+    "/pending-leave/id": {
+        params: {
+            type: "object",
+            properties: {
+                id: uuidType
+            },
+            required: ["id"]
+        }
+    },
+    "/pending-leave/future": {
+        params: {
+            type: "object",
+            properties: {
+                employeeId: uuidType
+            },
+            required: ["employeeId"]
+        }
+    },
+    "/pending-leave/past": {
+        params: {
+            type: "object",
+            properties: {
+                employeeId: uuidType
+            },
+            required: ["employeeId"]
+        }
+    },
+    "/pending-leave/all": {
+        params: {
+            type: "object",
+            properties: {
+                employeeId: uuidType
+            },
+            required: ["employeeId"]
+        }
+    },
+    "/pending-leave/add": {
+        body: {
+            type: "object",
+            properties: {
+                employeeId: uuidType,
+                startDate: numberType,
+                nthDays: numberType,
+            },
+            required: ["employeeId", "startDate", "nthDays"]
+        }
+    },
+    "/pending-leave/delete": {
+        params: {
+            type: "object",
+            properties: {
+                id: uuidType
+            },
+            required: ["id"]
+        }
+    },
+    "/pending-leave/update": {
+        params: {
+            type: "object",
+            properties: {
+                id: uuidType
+            },
+            required: ["id"]
+        },
+        body: {
+            type: "object",
+            properties: {
+                employeeId: uuidType,
+                startDate: numberType,
+                nthDays: numberType,
+            }
+        }
+    },
+
     "/department": {
         params: {
             type: "object",
             properties: {
-                id: {
-                    type: "string"
-                }
+                id: uuidType
             },
             required: ["id"]
         }
@@ -111,7 +192,7 @@ export const schema = {
         body: {
             type: "object",
             properties: {
-                name: { type: "string" }
+                name: stringType
             },
             required: ["name"]
         }
@@ -120,9 +201,7 @@ export const schema = {
         params: {
             type: "object",
             properties: {
-                id: {
-                    type: "string"
-                }
+                id: uuidType
             },
             required: ["id"]
         }
@@ -131,16 +210,14 @@ export const schema = {
         params: {
             type: "object",
             properties: {
-                id: {
-                    type: "string"
-                }
+                id: uuidType
             },
             required: ["id"]
         },
         body: {
             type: "object",
             properties: {
-                name: { type: "string" }
+                name: stringType
             }
         }
     },

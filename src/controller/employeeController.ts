@@ -7,6 +7,7 @@ import { encryptPassword } from "../util/tokenGenerator";
 import { redis } from "../util/redis";
 import {DataBaseError, ProcessingError} from "../util/errors";
 
+
 export async function getEmployeeById(req: FastifyRequest<{ Params: { id: string }}>, res: FastifyReply) {
     try {
         const { id } = req.params;
@@ -120,6 +121,31 @@ export async function login(this: FastifyInstance, req: FastifyRequest<{ Body: {
 
             if (response) {
                 res.send({ tokenJWT });
+            } else {
+                res.send(new ProcessingError('Login failed').toJSON());
+            }
+        } else {
+            res.send(new ProcessingError('Employee not found').toJSON());
+        }
+    } catch (err) {
+        res.send(new DataBaseError("error on login employees").toJSON())
+    }
+    return res
+}
+
+export async function logout(this: FastifyInstance, req: FastifyRequest<{ Body: { email: string }}>, res: FastifyReply) {
+    const { email } = req.body;
+    try {
+        const employee = await Employee.findOne({ email: email });
+        if (employee) {
+            await redis.select(1) // redis database for login sessions
+            const token = await redis.get(email);
+
+            if (token) {
+                this.jwt.verify(token);
+                await redis.del(email);
+
+                res.send({  });
             } else {
                 res.send(new ProcessingError('Login failed').toJSON());
             }

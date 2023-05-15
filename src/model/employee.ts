@@ -3,17 +3,19 @@
 import { Schema, model } from "mongoose";
 
 export interface IEmployee {
-    id?: string;
+    _id?: string;
     name: string;
     email: string;
     password: string;
-    age: number;
+    birthDate: number;
     phoneNumber: string;
-    department: string
+    department: string,
+    address: string,
+    daysOff: number
 }
 
 export const employeeSchema = new Schema<IEmployee>({
-    id: {
+    _id: {
         type: String,
         required: false
     },
@@ -29,7 +31,7 @@ export const employeeSchema = new Schema<IEmployee>({
         type: String,
         required: true
     },
-    age: {
+    birthDate: {
         type: Number,
         required: true
     },
@@ -39,6 +41,14 @@ export const employeeSchema = new Schema<IEmployee>({
     },
     department: {
         type: String,
+        required: true
+    },
+    address: {
+        type: String,
+        required: true
+    },
+    daysOff: {
+        type: Number,
         required: true
     }
 });

@@ -1,0 +1,34 @@
+version: '3'
+services:
+  node:
+    container_name: docker-node
+    restart: always
+    build: .
+    ports:
+      - '8000:3000'
+    links:
+      - mongo
+      - rabbit
+    environment:
+      - NODE_ENV=production
+  mongo:
+    container_name: mongo
+    image: mongo
+    ports:
+      - '27017:27017'
+    env_file:
+      - .env
+  rabbit:
+    container_name: rabbit
+    image: rabbitmq
+    ports:
+      - '5672:5672'
+    env_file:
+      - .env
+  redis:
+    container_name: redis
+    image: redis
+    ports:
+      - '6379:6379'
+    env_file:
+      - .env

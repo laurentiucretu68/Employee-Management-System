@@ -4,8 +4,8 @@ import { FastifyInstance } from "fastify";
 import { schema } from "../util/schema";
 import {
     addEmployee, getEmployees, getEmployeeById, getUsersByDepartmentName,
-    deleteEmployeeById, updateEmployeeById, login, getSession
-} from "../controller/userController";
+    deleteEmployeeById, updateEmployeeById, login, getSession, logout
+} from "../controller/employeeController";
 
 export async function employeeRouter(fastify: FastifyInstance) {
     fastify.route({
@@ -20,6 +20,13 @@ export async function employeeRouter(fastify: FastifyInstance) {
         url: '/employee/session/:email',
         handler: getSession,
         schema: schema["/employee/session"]
+    })
+
+    fastify.route({
+        method: 'POST',
+        url: '/employee/logout',
+        handler: logout,
+        schema: schema["/employee/logout"]
     })
 
     fastify.route({

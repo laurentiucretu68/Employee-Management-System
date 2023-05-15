@@ -3,14 +3,14 @@
 import { Schema, model } from "mongoose";
 
 export interface IAdmin {
-    id?: string;
+    _id?: string;
     email: string;
     password: string;
     phoneNumber: string;
 }
 
 export const adminSchema = new Schema<IAdmin>({
-    id: {
+    _id: {
         type: String,
         required: false
     },

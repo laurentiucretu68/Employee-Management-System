@@ -4,7 +4,7 @@ import { connectToDatabase, closeDatabaseConnection} from "./src/model";
 import { amqpConnect, log } from "./src/util/amqp";
 import { initRedis } from "./src/util/redis";
 import { ServerError } from "./src/util/errors";
-import {fastifyRegisters} from "./src/util/registers";
+import { fastifyRegisters } from "./src/util/registers";
 
 
 const fastify: FastifyInstance = Fastify({
@@ -24,7 +24,7 @@ const fastify: FastifyInstance = Fastify({
 
         await fastify.listen({
             port: Number(process.env.PORT),
-            host: process.env.HOST
+            host: process.env.HOST_ADDRESS
         })
 
     } catch (error) {
