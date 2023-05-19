@@ -7,6 +7,8 @@ import { departmentRouter } from "../routes/departmentRouter";
 import {pendingLeaveRouter} from "../routes/pendingLeaveRouter";
 import { IAdmin } from "../model/admin";
 import { IEmployee } from "../model/employee";
+import {adminRouter} from "../routes/adminRouter";
+import cors from "@fastify/cors";
 
 
 declare module 'fastify' {
@@ -20,6 +22,7 @@ declare module 'fastify' {
 }
 
 export async function fastifyRegisters(fastify: FastifyInstance) {
+
     // Documentation
     fastify.register(require('@fastify/swagger'))
     fastify.register(require('@fastify/swagger-ui'), {
@@ -42,8 +45,10 @@ export async function fastifyRegisters(fastify: FastifyInstance) {
         }
     });
     fastify.register(require('@fastify/auth'));
+    fastify.register(cors)
 
     // Routes
+    fastify.register(adminRouter);
     fastify.register(employeeRouter);
     fastify.register(departmentRouter);
     fastify.register(pendingLeaveRouter)

@@ -5,7 +5,7 @@ import { Department } from "../model/department";
 import { FastifyInstance, FastifyReply, FastifyRequest } from "fastify";
 import { encryptPassword } from "../util/tokenGenerator";
 import { redis } from "../util/redis";
-import {DataBaseError, ProcessingError} from "../util/errors";
+import { DataBaseError, ProcessingError } from "../util/errors";
 
 
 export async function getEmployeeById(req: FastifyRequest<{ Params: { id: string }}>, res: FastifyReply) {
@@ -128,7 +128,7 @@ export async function login(this: FastifyInstance, req: FastifyRequest<{ Body: {
             res.send(new ProcessingError('Employee not found').toJSON());
         }
     } catch (err) {
-        res.send(new DataBaseError("error on login employees").toJSON())
+        res.send(new DataBaseError("employee authentication error").toJSON())
     }
     return res
 }
@@ -153,7 +153,7 @@ export async function logout(this: FastifyInstance, req: FastifyRequest<{ Body: 
             res.send(new ProcessingError('Employee not found').toJSON());
         }
     } catch (err) {
-        res.send(new DataBaseError("error on login employees").toJSON())
+        res.send(new DataBaseError("employee authentication error").toJSON())
     }
     return res
 }

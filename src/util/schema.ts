@@ -8,8 +8,7 @@ const numberType = {
     type: "number"
 }
 const uuidType = {
-    type: "string",
-    pattern: "^[0-9a-fA-F]{8}\\b-[0-9a-fA-F]{4}\\b-[0-9a-fA-F]{4}\\b-[0-9a-fA-F]{4}\\b-[0-9a-fA-F]{12}$"
+    type: "string"
 }
 
 const emailType = {
@@ -18,6 +17,44 @@ const emailType = {
 }
 
 export const schema = {
+    "/admin": {
+        params: {
+            type: "object",
+            properties: {
+                departmentName: stringType
+            },
+            required: ["departmentName"]
+        }
+    },
+    "/admin/login": {
+        body: {
+            type: "object",
+            properties: {
+                email: emailType,
+                password: stringType,
+            },
+            required: ["email", "password"]
+        }
+    },
+    "/admin/session": {
+        params: {
+            type: "object",
+            properties: {
+                email: emailType
+            },
+            required: ["email"]
+        }
+    },
+    "/admin/logout": {
+        body: {
+            type: "object",
+            properties: {
+                email: emailType
+            },
+            required: ["email"]
+        }
+    },
+
     "/employee": {
         params: {
             type: "object",

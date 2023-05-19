@@ -1,82 +1,87 @@
 "use strict";
 
 import { IDepartment, Department } from "../model/department"
-import {FastifyReply, FastifyRequest} from "fastify";
-import {DataBaseError, ProcessingError} from "../util/errors";
+import { FastifyReply, FastifyRequest } from "fastify";
+import { DataBaseError, ProcessingError } from "../util/errors";
 
 
 export async function getDepartmentById(req: FastifyRequest<{ Params: { id: string }}>, res: FastifyReply) {
+    let department = null
     try {
         const { id } = req.params;
-        const department = await Department.findById({ _id: id });
-        if (!department) {
-            res.send(new ProcessingError('department not found').toJSON())
-        } else {
-            res.send(department)
-        }
+        department = await Department.findById({ _id: id });
     } catch (err) {
-        res.send(new DataBaseError("error finding department").toJSON())
+        throw new DataBaseError("error finding department")
     }
+
+    if (!department) {
+        throw new ProcessingError('department not found')
+    }
+    res.send(department)
     return res
 }
 
 export async function getDepartments(req: FastifyRequest, res: FastifyReply) {
+    let departments = null
     try {
-        const departments = await Department.find();
-        if (!departments) {
-            res.send(new ProcessingError('no department found').toJSON())
-        } else {
-            res.send(departments)
-        }
+        departments = await Department.find();
     } catch (err) {
-        res.send(new DataBaseError("error finding departments").toJSON())
+        throw new DataBaseError("error finding departments")
     }
+
+    if (!departments) {
+        throw new ProcessingError('no department found')
+    }
+    res.send(departments)
     return res
 }
 
 export async function addDepartment(req: FastifyRequest<{ Body: IDepartment }>, res: FastifyReply) {
+    let result = null
     try {
-        const department =  await new Department(req.body).save();
-
-        if (!department) {
-            res.send(new ProcessingError('department can\'t be added').toJSON())
-        } else {
-            res.send(department)
+         result = await Department.findOne({ name: req.body.name })
+        if (result) {
+            res.send(new ProcessingError("department already exists").toJSON())
         }
+        const department =  await new Department(req.body).save();
+        if (!department) {
+            res.send(new ProcessingError('department can\'t be added'))
+        }
+        res.send(department)
     } catch (err) {
-        res.send(new DataBaseError("error adding new department").toJSON())
+        throw new DataBaseError("error adding new department")
     }
     return res
 }
 
 export async function deleteDepartmentById(req: FastifyRequest<{ Params: { id: string }}>, res: FastifyReply) {
+    let status = null
     try {
         const { id } = req.params;
-        const status = await Department.deleteOne({ _id: id });
-
-        if (!status) {
-            res.send(new ProcessingError('department not found').toJSON())
-        } else {
-            res.send(status)
-        }
+        status = await Department.deleteOne({ _id: id });
     } catch (err) {
-        res.send(new DataBaseError("error deleting department").toJSON())
+        throw new DataBaseError("error deleting department")
     }
+
+    if (!status) {
+        throw new ProcessingError('department not found')
+    }
+    res.send(status)
     return res
 }
 
 export async function updateDepartmentById(req: FastifyRequest<{ Params: { id: string }, Body: IDepartment}>, res: FastifyReply) {
+    let status = null
     try {
         const { id } = req.params;
-        const status = await Department.updateOne({ _id: id }, { $set: req.body });
-
-        if (!status) {
-            res.send(new ProcessingError('department not found').toJSON())
-        } else {
-            res.send(status)
-        }
+        status = await Department.updateOne({ _id: id }, { $set: req.body });
     } catch (err) {
         res.send(new DataBaseError("error updating department").toJSON())
     }
+
+    if (!status) {
+        throw new ProcessingError('department not found')
+    }
+    res.send(status)
     return res
 }

@@ -3,7 +3,7 @@
 import { Schema, model } from "mongoose";
 
 export interface IEmployee {
-    _id?: string;
+    id?: string;
     name: string;
     email: string;
     password: string;
@@ -15,7 +15,7 @@ export interface IEmployee {
 }
 
 export const employeeSchema = new Schema<IEmployee>({
-    _id: {
+    id: {
         type: String,
         required: false
     },

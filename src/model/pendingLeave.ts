@@ -3,14 +3,14 @@
 import { Schema, model } from "mongoose";
 
 export interface IPendingLeave {
-    _id?: string;
+    id?: string;
     employeeId: string;
     startDate: number;
     nthDays: number;
 }
 
 export const pendingLeaveSchema = new Schema<IPendingLeave>({
-    _id: {
+    id: {
         type: String,
         required: false
     },

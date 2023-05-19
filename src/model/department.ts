@@ -3,12 +3,12 @@
 import { Schema, model } from "mongoose";
 
 export interface IDepartment {
-    _id?: string;
+    id?: string;
     name: string;
 }
 
 export const departmentSchema = new Schema<IDepartment>({
-    _id: {
+    id: {
         type: String,
         required: false
     },
