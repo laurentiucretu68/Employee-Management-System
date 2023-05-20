@@ -28,9 +28,8 @@ const fastify: FastifyInstance = Fastify({
         })
 
     } catch (error) {
-        console.log(error)
-        await log.publish(Buffer.from(JSON.stringify(new ServerError('Error on starting server'))));
         console.error(error)
+        await log.publish(Buffer.from(JSON.stringify(new ServerError('Error on starting server'))));
         process.exit(1);
     }
 })()

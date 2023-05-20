@@ -21,6 +21,21 @@ services:
     image: redis
     ports:
       - '6380:6379'
+  kibana:
+    container_name: kb-container
+    image: docker.elastic.co/kibana/kibana:8.7.1
+    depends_on:
+      - elasticsearch
+    ports:
+      - '5602:5601'
+  elasticsearch:
+    container_name: es-container
+    image: docker.elastic.co/elasticsearch/elasticsearch:8.7.1
+    environment:
+      - xpack.security.enabled=false
+      - "discovery.type=single-node"
+    ports:
+        - '9201:9200'
 
   node:
     container_name: docker-node
@@ -36,30 +51,15 @@ services:
       - rabbit
       - mongo
       - redis
+      - kibana
+      - elasticsearch
     env_file:
       - .env
-#  elasticsearch:
-#    container_name: es-container
-#    image: docker.elastic.co/elasticsearch/elasticsearch:8.7.1
-#    environment:
-#      - xpack.security.enabled=false
-#      - "discovery.type=single-node"
-#    networks:
-#      - es-net
-#    ports:
-#      - '9200:9200'
-#  kibana:
-#    container_name: kb-container
-#    image: docker.elastic.co/kibana/kibana:8.7.1
-#    environment:
-#      - ELASTICSEARCH_HOSTS=http://es-container:9200
-#    networks:
-#      - es-net
-#    depends_on:
-#      - elasticsearch
-#    ports:
-#      - '5601:5601'
-#
-#networks:
-#  es-net:
-#    driver: bridge
+    command: [
+      "./wait-for-it.sh", "rabbit:5672", "--",
+      "./wait-for-it.sh", "mongo:27017", "--",
+      "./wait-for-it.sh", "redis:6379", "--",
+      "./wait-for-it.sh", "kibana:5601", "--",
+      "./wait-for-it.sh", "elasticsearch:9200", "--",
+      "npm", "start"
+    ]

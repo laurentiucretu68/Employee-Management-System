@@ -4,14 +4,17 @@ import { Admin } from "../model/admin";
 import { FastifyInstance, FastifyReply, FastifyRequest } from "fastify";
 import { encryptPassword } from "../util/tokenGenerator";
 import { redis } from "../util/redis";
-import { DataBaseError, ProcessingError } from "../util/errors";
+import {DataBaseError, ProcessingError, ServerError} from "../util/errors";
+import {log} from "../util/amqp";
 
 export async function getAdminByDepartmentName(req: FastifyRequest<{ Params: { departmentName: string }}>, res: FastifyReply) {
     let admin = null
     try {
         admin = await Admin.findOne({ departmentName: req.params.departmentName });
     } catch (err) {
-        res.send(new DataBaseError("error getting admin").toJSON())
+        const error = new DataBaseError("error getting admin ").toJSON()
+        await log.publish(Buffer.from(JSON.stringify(error)));
+        res.send(error)
     }
 
     if (!admin) {
