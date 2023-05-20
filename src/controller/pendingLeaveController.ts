@@ -6,6 +6,20 @@ import {DataBaseError, ProcessingError} from "../util/errors";
 import {Employee} from "../model/employee";
 
 
+export async function getAllPendingLeave(req: FastifyRequest, res: FastifyReply) {
+    try {
+        const pendingLeave = await PendingLeave.find();
+        if (!pendingLeave) {
+            res.send(new ProcessingError('pending leaves not found').toJSON())
+        } else {
+            res.send(pendingLeave)
+        }
+    } catch (err) {
+        res.send(new DataBaseError("error finding pending leave").toJSON())
+    }
+    return res
+}
+
 export async function getPendingLeaveById(req: FastifyRequest<{ Params: { id: string }}>, res: FastifyReply) {
     try {
         const { id } = req.params;

@@ -142,6 +142,11 @@ export const schema = {
         }
     },
 
+    "/pending-leave": {
+        params: {
+            type: "object"
+        }
+    },
     "/pending-leave/id": {
         params: {
             type: "object",

@@ -23,17 +23,11 @@ export async function initRedis(){
     const config = {
         host: String(process.env.REDIS_HOST),
         port: Number(process.env.REDIS_PORT),
-        username: String(process.env.REDIS_USER),
-        password: String(process.env.REDIS_PASSWORD),
         db: Number(process.env.REDIS_DATABASES)
     };
 
     redis = new RedisSingleton(config).getInstance();
-    try {
-        await redis.auth(config.username, config.password);
+    if (redis) {
         console.log("Redis connection successfully established!");
-
-    } catch (err: any) {
-        throw new ValidationError(err.message);
     }
 }

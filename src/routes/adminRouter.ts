@@ -2,8 +2,7 @@
 
 import { FastifyInstance } from "fastify";
 import { schema } from "../util/schema";
-import { getAdminByDepartmentName, login, getSession, logout
-} from "../controller/adminController";
+import { getAdminByDepartmentName, loginAdmin, getSessionAdmin, logoutAdmin } from "../controller/adminController";
 
 export async function adminRouter(fastify: FastifyInstance) {
     fastify.route({
@@ -16,21 +15,21 @@ export async function adminRouter(fastify: FastifyInstance) {
     fastify.route({
         method: 'POST',
         url: '/admin/login',
-        handler: login,
+        handler: loginAdmin,
         schema: schema["/admin/login"]
     })
 
     fastify.route({
         method: 'GET',
         url: '/admin/session/:email',
-        handler: getSession,
+        handler: getSessionAdmin,
         schema: schema["/admin/session"]
     })
 
     fastify.route({
         method: 'POST',
         url: '/admin/logout',
-        handler: logout,
+        handler: logoutAdmin,
         schema: schema["/admin/logout"]
     })
 }

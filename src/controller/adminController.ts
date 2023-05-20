@@ -1,17 +1,17 @@
 "use strict";
 
+import { Admin } from "../model/admin";
 import { FastifyInstance, FastifyReply, FastifyRequest } from "fastify";
 import { encryptPassword } from "../util/tokenGenerator";
 import { redis } from "../util/redis";
 import { DataBaseError, ProcessingError } from "../util/errors";
-import { Admin } from "../model/admin";
 
 export async function getAdminByDepartmentName(req: FastifyRequest<{ Params: { departmentName: string }}>, res: FastifyReply) {
     let admin = null
     try {
         admin = await Admin.findOne({ departmentName: req.params.departmentName });
     } catch (err) {
-        res.send(new DataBaseError("error getting employee").toJSON())
+        res.send(new DataBaseError("error getting admin").toJSON())
     }
 
     if (!admin) {
@@ -21,7 +21,7 @@ export async function getAdminByDepartmentName(req: FastifyRequest<{ Params: { d
     return res
 }
 
-export async function login(this: FastifyInstance, req: FastifyRequest<{ Body: { email: string, password: string }}>, res: FastifyReply) {
+export async function loginAdmin(this: FastifyInstance, req: FastifyRequest<{ Body: { email: string, password: string }}>, res: FastifyReply) {
     try {
         const { email, password } = req.body;
         const admin = await Admin.findOne({ email: email, password: encryptPassword(password) });
@@ -46,7 +46,7 @@ export async function login(this: FastifyInstance, req: FastifyRequest<{ Body: {
     return res
 }
 
-export async function logout(this: FastifyInstance, req: FastifyRequest<{ Body: { email: string }}>, res: FastifyReply) {
+export async function logoutAdmin(this: FastifyInstance, req: FastifyRequest<{ Body: { email: string }}>, res: FastifyReply) {
     try {
         const { email } = req.body;
         const admin = await Admin.findOne({ email: email });
@@ -72,7 +72,7 @@ export async function logout(this: FastifyInstance, req: FastifyRequest<{ Body: 
     return res
 }
 
-export async function getSession(req: FastifyRequest<{ Params: { email: string }}>, res: FastifyReply) {
+export async function getSessionAdmin(req: FastifyRequest<{ Params: { email: string }}>, res: FastifyReply) {
     try {
         const { email } = req.params
         const response = await redis.get(email);

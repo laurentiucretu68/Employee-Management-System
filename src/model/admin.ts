@@ -33,4 +33,4 @@ export const adminSchema = new Schema<IAdmin>({
     }
 });
 
-export const Admin = model<IAdmin>('Employee', adminSchema);
+export const Admin = model<IAdmin>('Admin', adminSchema);

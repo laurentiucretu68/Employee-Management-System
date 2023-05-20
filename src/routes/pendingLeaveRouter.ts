@@ -7,10 +7,18 @@ import {
     getAllPendingLeaveForAEmployee,
     getFuturePendingLeaveForAEmployee,
     getPastPendingLeaveForAEmployee,
-    getPendingLeaveById, updatePendingLeaveById
+    getPendingLeaveById, updatePendingLeaveById,
+    getAllPendingLeave
 } from "../controller/pendingLeaveController";
 
 export async function pendingLeaveRouter(fastify: FastifyInstance) {
+    fastify.route({
+        method: 'GET',
+        url: '/pending-leave',
+        handler: getAllPendingLeave,
+        schema: schema["/pending-leave"]
+    })
+
     fastify.route({
         method: 'GET',
         url: '/pending-leave/id/:id',

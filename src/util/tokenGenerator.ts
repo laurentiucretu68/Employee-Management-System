@@ -1,7 +1,7 @@
 "use strict";
 
 import { TokenGenerator, TokenBase } from 'ts-token-generator';
-import crypto from "crypto";
+const crypto = require("crypto");
 
 export const token = new TokenGenerator({
     bitSize: 512,
