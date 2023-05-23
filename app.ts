@@ -14,7 +14,7 @@ const fastify: FastifyInstance = Fastify({
 (async () => {
     try {
         await connectToDatabase()
-        // await amqpConnect();
+        await amqpConnect();
         await initRedis();
         await fastifyRegisters(fastify);
 
