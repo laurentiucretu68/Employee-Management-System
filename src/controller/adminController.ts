@@ -4,7 +4,7 @@ import { Admin } from "../model/admin";
 import { FastifyInstance, FastifyReply, FastifyRequest } from "fastify";
 import { encryptPassword } from "../util/tokenGenerator";
 import { redis } from "../util/redis";
-import {DataBaseError, ProcessingError, ServerError} from "../util/errors";
+import {DataBaseError, ProcessingError } from "../util/errors";
 import {log} from "../util/amqp";
 
 export async function getAdminByDepartmentName(req: FastifyRequest<{ Params: { departmentName: string }}>, res: FastifyReply) {
@@ -44,7 +44,9 @@ export async function loginAdmin(this: FastifyInstance, req: FastifyRequest<{ Bo
             res.send(new ProcessingError('Admin not found').toJSON());
         }
     } catch (err) {
-        res.send(new DataBaseError("admin authentication error\n").toJSON())
+        const error = new DataBaseError("admin authentication error\n")
+        res.send(error.toJSON())
+        await log.publish(Buffer.from(JSON.stringify(error)));
     }
     return res
 }
@@ -55,7 +57,7 @@ export async function logoutAdmin(this: FastifyInstance, req: FastifyRequest<{ B
         const admin = await Admin.findOne({ email: email });
 
         if (admin) {
-            await redis.select(1) // redis database for login sessions
+            await redis.select(1)
             const token = await redis.get(email);
 
             if (token) {
@@ -70,7 +72,9 @@ export async function logoutAdmin(this: FastifyInstance, req: FastifyRequest<{ B
             res.send(new ProcessingError('Admin not found').toJSON());
         }
     } catch (err) {
-        res.send(new DataBaseError("admin authentication error").toJSON())
+        const error = new DataBaseError("admin authentication error\n")
+        res.send(error.toJSON())
+        await log.publish(Buffer.from(JSON.stringify(error)));
     }
     return res
 }
@@ -84,8 +88,10 @@ export async function getSessionAdmin(req: FastifyRequest<{ Params: { email: str
         } else {
             res.send(new ProcessingError(`No session found`).toJSON());
         }
-    } catch (error) {
-        res.send(new DataBaseError("error finding session").toJSON());
+    } catch (err) {
+        const error = new DataBaseError("error finding session\n")
+        res.send(error.toJSON())
+        await log.publish(Buffer.from(JSON.stringify(error)));
     }
     return res
 }
