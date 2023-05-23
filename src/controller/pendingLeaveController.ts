@@ -85,13 +85,14 @@ export async function getPastPendingLeaveForAEmployee(req: FastifyRequest<{ Para
 
 export async function getAllPendingLeaveForAEmployee(req: FastifyRequest<{ Params: { employeeId: string }}>, res: FastifyReply) {
     try {
-        const pendingLeave = await PendingLeave.findById({ _id: req.params.employeeId });
+        const pendingLeave = await PendingLeave.findOne({ employeeId: req.params.employeeId });
         if (!pendingLeave) {
             res.send(new ProcessingError('pending leaves not found').toJSON())
         } else {
             res.send(pendingLeave)
         }
     } catch (err) {
+        console.log(err)
         res.send(new DataBaseError("error finding pending leaves").toJSON())
     }
     return res

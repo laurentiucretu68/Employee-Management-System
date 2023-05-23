@@ -1,10 +1,10 @@
 "use strict";
 
-import { Admin } from "../model/admin";
-import { FastifyInstance, FastifyReply, FastifyRequest } from "fastify";
-import { encryptPassword } from "../util/tokenGenerator";
-import { redis } from "../util/redis";
-import {DataBaseError, ProcessingError, ServerError} from "../util/errors";
+import {Admin} from "../model/admin";
+import {FastifyInstance, FastifyReply, FastifyRequest} from "fastify";
+import {encryptPassword} from "../util/tokenGenerator";
+import {redis} from "../util/redis";
+import {DataBaseError, ProcessingError} from "../util/errors";
 import {log} from "../util/amqp";
 
 export async function getAdminByDepartmentName(req: FastifyRequest<{ Params: { departmentName: string }}>, res: FastifyReply) {
@@ -36,7 +36,7 @@ export async function loginAdmin(this: FastifyInstance, req: FastifyRequest<{ Bo
             const response = await redis.set(email, tokenJWT, 'EX', 300 * 60);
 
             if (response) {
-                res.send({ tokenJWT });
+                res.send(tokenJWT);
             } else {
                 res.send(new ProcessingError('Login failed').toJSON());
             }

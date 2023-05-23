@@ -120,7 +120,7 @@ export async function login(this: FastifyInstance, req: FastifyRequest<{ Body: {
             const response = await redis.set(email, tokenJWT, 'EX', 300 * 60);
 
             if (response) {
-                res.send({ tokenJWT });
+                res.send(tokenJWT);
             } else {
                 res.send(new ProcessingError('Login failed').toJSON());
             }
@@ -163,7 +163,10 @@ export async function getSession(req: FastifyRequest<{ Params: { email: string }
     try {
         const response = await redis.get(email);
         if (response) {
-            res.send({ jwt: response })
+            const employee = await Employee.findOne({ email: email})
+            if (employee) {
+                res.send({ jwt: response, ...employee })
+            }
         } else {
             res.send(new ProcessingError(`No session found`).toJSON());
         }
