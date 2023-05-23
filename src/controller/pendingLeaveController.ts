@@ -6,6 +6,20 @@ import {DataBaseError, ProcessingError} from "../util/errors";
 import {Employee} from "../model/employee";
 
 
+export async function getUnapprovedPendingLeave(req: FastifyRequest, res: FastifyReply) {
+    try {
+        const pendingLeave = await PendingLeave.find({ status: null });
+        if (!pendingLeave) {
+            res.send(new ProcessingError('pending leaves not found').toJSON())
+        } else {
+            res.send(pendingLeave)
+        }
+    } catch (err) {
+        res.send(new DataBaseError("error finding pending leave").toJSON())
+    }
+    return res
+}
+
 export async function getAllPendingLeave(req: FastifyRequest, res: FastifyReply) {
     try {
         const pendingLeave = await PendingLeave.find();
@@ -38,7 +52,7 @@ export async function getPendingLeaveById(req: FastifyRequest<{ Params: { id: st
 export async function getFuturePendingLeaveForAEmployee(req: FastifyRequest<{ Params: { employeeId: string }}>, res: FastifyReply) {
     try {
         const pendingLeave = await PendingLeave.findById({
-                                                                employeeId: req.params.employeeId,
+                                                                _id: req.params.employeeId,
                                                                 startDate: { $gt: Date.now() }
                                                         });
         if (!pendingLeave) {
@@ -55,7 +69,7 @@ export async function getFuturePendingLeaveForAEmployee(req: FastifyRequest<{ Pa
 export async function getPastPendingLeaveForAEmployee(req: FastifyRequest<{ Params: { employeeId: string }}>, res: FastifyReply) {
     try {
         const pendingLeave = await PendingLeave.findById({
-                                                            employeeId: req.params.employeeId,
+                                                            _id: req.params.employeeId,
                                                             startDate: { $lt: Date.now() }
                                                         });
         if (!pendingLeave) {
@@ -71,7 +85,7 @@ export async function getPastPendingLeaveForAEmployee(req: FastifyRequest<{ Para
 
 export async function getAllPendingLeaveForAEmployee(req: FastifyRequest<{ Params: { employeeId: string }}>, res: FastifyReply) {
     try {
-        const pendingLeave = await PendingLeave.findById({ employeeId: req.params.employeeId });
+        const pendingLeave = await PendingLeave.findById({ _id: req.params.employeeId });
         if (!pendingLeave) {
             res.send(new ProcessingError('pending leaves not found').toJSON())
         } else {
@@ -87,7 +101,13 @@ export async function addPendingLeave(req: FastifyRequest<{ Body: IPendingLeave 
     try {
         const checkDaysOff= await Employee.findOne({ _id: req.body.employeeId })
         if (checkDaysOff && Number(checkDaysOff.daysOff) >= req.body.nthDays) {
-            const pendingLeave= await new PendingLeave(req.body).save();
+            const employee = {
+                ...req.body,
+                employeeName: checkDaysOff.name,
+                employeeEmail: checkDaysOff.email,
+            }
+            console.log(employee)
+            const pendingLeave= await new PendingLeave(employee).save();
             if (!pendingLeave) {
                 res.send(new ProcessingError('pending leave can\'t be submitted').toJSON())
             } else {

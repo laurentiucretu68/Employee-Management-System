@@ -16,6 +16,10 @@ const emailType = {
     format: "email"
 }
 
+const booleanType = {
+    type: "boolean"
+}
+
 export const schema = {
     "/admin": {
         params: {
@@ -147,6 +151,11 @@ export const schema = {
             type: "object"
         }
     },
+    "/pending-leave/unapproved": {
+        params: {
+            type: "object"
+        }
+    },
     "/pending-leave/id": {
         params: {
             type: "object",
@@ -217,6 +226,7 @@ export const schema = {
                 employeeId: uuidType,
                 startDate: numberType,
                 nthDays: numberType,
+                status: booleanType
             }
         }
     },
