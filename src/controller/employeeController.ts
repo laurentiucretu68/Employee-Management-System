@@ -195,3 +195,8 @@ export async function getSession(req: FastifyRequest<{ Params: { email: string }
     }
     return res
 }
+
+
+export async function getDaysOff(req: FastifyRequest<{ Params: { email: string }}>, res: FastifyReply) {
+
+}

@@ -225,11 +225,28 @@ export const schema = {
         body: {
             type: "object",
             properties: {
-                employeeId: uuidType,
                 startDate: numberType,
                 nthDays: numberType,
                 status: booleanType
             }
+        }
+    },
+    "/pending-leave/accept": {
+        params: {
+            type: "object",
+            properties: {
+                id: uuidType
+            },
+            required: ["id"]
+        }
+    },
+    "/pending-leave/unaccepted": {
+        params: {
+            type: "object",
+            properties: {
+                id: uuidType
+            },
+            required: ["id"]
         }
     },
 

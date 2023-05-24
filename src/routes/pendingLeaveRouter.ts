@@ -8,7 +8,7 @@ import {
     getFuturePendingLeaveForAEmployee,
     getPastPendingLeaveForAEmployee,
     getPendingLeaveById, updatePendingLeaveById,
-    getAllPendingLeave, getUnapprovedPendingLeave
+    getAllPendingLeave, getUnapprovedPendingLeave, acceptPendingLeave, getUnacceptedPendingLeaves
 } from "../controller/pendingLeaveController";
 
 export async function pendingLeaveRouter(fastify: FastifyInstance) {
@@ -73,5 +73,19 @@ export async function pendingLeaveRouter(fastify: FastifyInstance) {
         url: '/pending-leave/update/:id',
         handler: updatePendingLeaveById,
         schema: schema["/pending-leave/update"]
+    })
+
+    fastify.route({
+        method: 'PUT',
+        url: '/pending-leave/accept/:id',
+        handler: acceptPendingLeave,
+        schema: schema["/pending-leave/accept"]
+    })
+
+    fastify.route({
+        method: 'GET',
+        url: '/pending-leave/unaccepted/:id',
+        handler: getUnacceptedPendingLeaves,
+        schema: schema["/pending-leave/unaccepted"]
     })
 }

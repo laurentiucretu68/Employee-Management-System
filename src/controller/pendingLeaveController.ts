@@ -159,8 +159,55 @@ export async function updatePendingLeaveById(req: FastifyRequest<{ Params: { id:
         if (!status) {
             res.send(new ProcessingError('pending leave not found').toJSON())
         } else {
+            if (req.body.nthDays) {
+                const pendingLeave = await PendingLeave.findOne({ _id: id })
+                if (pendingLeave) {
+                    const employee = await Employee.findOne({ _id: pendingLeave.employeeId })
+                    if (employee && pendingLeave.nthDays > employee.daysOff) {
+                        res.send(new ProcessingError("pending leave cannot be updated").toJSON())
+                    }
+                }
+            }
             res.send(status)
         }
+    } catch (err) {
+        const error = new DataBaseError("error updating pending leave\n")
+        res.send(error.toJSON())
+        await log.publish(Buffer.from(JSON.stringify(error)));
+    }
+    return res
+}
+
+export async function acceptPendingLeave(req: FastifyRequest<{ Params: { id: string }}>, res: FastifyReply) {
+    try {
+        const { id } = req.params;
+        const pendingLeave = await PendingLeave.findOne({ _id: id });
+
+        if (!pendingLeave) {
+            res.send(new ProcessingError('pending leave not found').toJSON())
+        } else {
+            const employee = await Employee.findOne({ _id: pendingLeave.employeeId })
+            if (employee && pendingLeave.nthDays > employee.daysOff) {
+                res.send(new ProcessingError("pending leave cannot be updated").toJSON())
+            }
+            await Employee.updateOne({$inc: { daysOff: -pendingLeave.nthDays }})
+            res.send({ success: 1 })
+        }
+    } catch (err) {
+        const error = new DataBaseError("error updating pending leave\n")
+        res.send(error.toJSON())
+        await log.publish(Buffer.from(JSON.stringify(error)));
+    }
+    return res
+}
+
+
+export async function getUnacceptedPendingLeaves(req: FastifyRequest<{ Params: { id: string }}>, res: FastifyReply) {
+    try {
+        const { id } = req.params;
+        const pendingLeave = await PendingLeave.find({ employeeId: id, status: true })
+
+        res.send(pendingLeave ? pendingLeave : [])
     } catch (err) {
         const error = new DataBaseError("error updating pending leave\n")
         res.send(error.toJSON())
