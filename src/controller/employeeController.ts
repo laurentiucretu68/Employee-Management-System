@@ -6,6 +6,7 @@ import { FastifyInstance, FastifyReply, FastifyRequest } from "fastify";
 import { encryptPassword } from "../util/tokenGenerator";
 import { redis } from "../util/redis";
 import { DataBaseError, ProcessingError } from "../util/errors";
+import {log} from "../util/amqp";
 
 
 export async function getEmployeeById(req: FastifyRequest<{ Params: { id: string }}>, res: FastifyReply) {
@@ -18,7 +19,9 @@ export async function getEmployeeById(req: FastifyRequest<{ Params: { id: string
             res.send(employee)
         }
     } catch (err) {
-        res.send(new DataBaseError("error getting employee").toJSON())
+        const error = new DataBaseError("error finding pending employee\n")
+        res.send(error.toJSON())
+        await log.publish(Buffer.from(JSON.stringify(error)));
     }
     return res
 }
@@ -32,7 +35,9 @@ export async function getEmployees(req: FastifyRequest, res: FastifyReply) {
             res.send(employees)
         }
     } catch (err) {
-        res.send(new DataBaseError("error getting employees").toJSON())
+        const error = new DataBaseError("error finding pending employees\n")
+        res.send(error.toJSON())
+        await log.publish(Buffer.from(JSON.stringify(error)));
     }
     return res
 }
@@ -44,7 +49,8 @@ export async function addEmployee(req: FastifyRequest<{ Body: IEmployee }>, res:
             res.send(new ProcessingError("Department doesn't exist").toJSON())
         } else {
             req.body.password = encryptPassword(req.body.password)
-            const employee =  await new Employee(req.body).save();
+            const daysOff = (12 - new Date().getMonth()) * 3;
+            const employee =  await new Employee({ ...req.body, daysOff}).save();
 
             if (!employee) {
                 res.send(new ProcessingError("user cannot be inserted").toJSON())
@@ -53,7 +59,9 @@ export async function addEmployee(req: FastifyRequest<{ Body: IEmployee }>, res:
             }
         }
     } catch (err) {
-        res.send(new DataBaseError("error adding employee").toJSON())
+        const error = new DataBaseError("error adding employee\n")
+        res.send(error.toJSON())
+        await log.publish(Buffer.from(JSON.stringify(error)));
     }
     return res
 }
@@ -69,7 +77,9 @@ export async function deleteEmployeeById(req: FastifyRequest<{ Params: { id: str
             res.send(status)
         }
     } catch (err) {
-        res.send(new DataBaseError("error deleting employee").toJSON())
+        const error = new DataBaseError("error deleting employee\n")
+        res.send(error.toJSON())
+        await log.publish(Buffer.from(JSON.stringify(error)));
     }
     return res
 }
@@ -88,7 +98,9 @@ export async function updateEmployeeById(req: FastifyRequest<{ Params: { id: str
             res.send(status)
         }
     } catch (err) {
-        res.send(new DataBaseError("error updating employee").toJSON())
+        const error = new DataBaseError("error updating employee\n")
+        res.send(error.toJSON())
+        await log.publish(Buffer.from(JSON.stringify(error)));
     }
     return res
 }
@@ -104,7 +116,9 @@ export async function getUsersByDepartmentName(req: FastifyRequest<{ Params: { n
             res.send(employees)
         }
     } catch (err) {
-        res.send(new DataBaseError("error getting employees").toJSON())
+        const error = new DataBaseError("error finding employee\n")
+        res.send(error.toJSON())
+        await log.publish(Buffer.from(JSON.stringify(error)));
     }
     return res
 }
@@ -128,7 +142,9 @@ export async function login(this: FastifyInstance, req: FastifyRequest<{ Body: {
             res.send(new ProcessingError('Employee not found').toJSON());
         }
     } catch (err) {
-        res.send(new DataBaseError("employee authentication error").toJSON())
+        const error = new DataBaseError("employee authentication error\n")
+        res.send(error.toJSON())
+        await log.publish(Buffer.from(JSON.stringify(error)));
     }
     return res
 }
@@ -153,7 +169,9 @@ export async function logout(this: FastifyInstance, req: FastifyRequest<{ Body: 
             res.send(new ProcessingError('Employee not found').toJSON());
         }
     } catch (err) {
-        res.send(new DataBaseError("employee authentication error").toJSON())
+        const error = new DataBaseError("employee authentication error\n")
+        res.send(error.toJSON())
+        await log.publish(Buffer.from(JSON.stringify(error)));
     }
     return res
 }
@@ -170,8 +188,10 @@ export async function getSession(req: FastifyRequest<{ Params: { email: string }
         } else {
             res.send(new ProcessingError(`No session found`).toJSON());
         }
-    } catch (error) {
-        res.send(new DataBaseError("error finding session").toJSON());
+    } catch (err) {
+        const error = new DataBaseError("error finding session\n")
+        res.send(error.toJSON())
+        await log.publish(Buffer.from(JSON.stringify(error)));
     }
     return res
 }

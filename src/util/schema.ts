@@ -90,9 +90,9 @@ export const schema = {
                 phoneNumber: stringType,
                 department: stringType,
                 address: stringType,
-                daysOff: numberType
             },
-            required: ["name", "email", "password", "birthDate", "phoneNumber", "department", "address", "daysOff"]
+            required: ["name", "email", "password", "birthDate", "phoneNumber", "department", "address"],
+            additionalProperties: false
         }
     },
     "/employee/update": {
@@ -148,12 +148,14 @@ export const schema = {
 
     "/pending-leave": {
         params: {
-            type: "object"
+            type: "object",
+            properties: {}
         }
     },
     "/pending-leave/unapproved": {
         params: {
-            type: "object"
+            type: "object",
+            properties: {}
         }
     },
     "/pending-leave/id": {

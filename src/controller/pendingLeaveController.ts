@@ -4,6 +4,7 @@ import { IPendingLeave, PendingLeave } from "../model/pendingLeave"
 import {FastifyReply, FastifyRequest} from "fastify";
 import {DataBaseError, ProcessingError} from "../util/errors";
 import {Employee} from "../model/employee";
+import {log} from "../util/amqp";
 
 
 export async function getUnapprovedPendingLeave(req: FastifyRequest, res: FastifyReply) {
@@ -15,7 +16,9 @@ export async function getUnapprovedPendingLeave(req: FastifyRequest, res: Fastif
             res.send(pendingLeave)
         }
     } catch (err) {
-        res.send(new DataBaseError("error finding pending leave").toJSON())
+        const error = new DataBaseError("error finding pending leave\n")
+        res.send(error.toJSON())
+        await log.publish(Buffer.from(JSON.stringify(error)));
     }
     return res
 }
@@ -29,7 +32,9 @@ export async function getAllPendingLeave(req: FastifyRequest, res: FastifyReply)
             res.send(pendingLeave)
         }
     } catch (err) {
-        res.send(new DataBaseError("error finding pending leave").toJSON())
+        const error = new DataBaseError("error finding pending leaves\n")
+        res.send(error.toJSON())
+        await log.publish(Buffer.from(JSON.stringify(error)));
     }
     return res
 }
@@ -44,7 +49,9 @@ export async function getPendingLeaveById(req: FastifyRequest<{ Params: { id: st
             res.send(pendingLeave)
         }
     } catch (err) {
-        res.send(new DataBaseError("error finding pending leave").toJSON())
+        const error = new DataBaseError("error finding pending leave\n")
+        res.send(error.toJSON())
+        await log.publish(Buffer.from(JSON.stringify(error)));
     }
     return res
 }
@@ -61,7 +68,9 @@ export async function getFuturePendingLeaveForAEmployee(req: FastifyRequest<{ Pa
             res.send(pendingLeave)
         }
     } catch (err) {
-        res.send(new DataBaseError("error finding pending leaves").toJSON())
+        const error = new DataBaseError("error finding pending leaves\n")
+        res.send(error.toJSON())
+        await log.publish(Buffer.from(JSON.stringify(error)));
     }
     return res
 }
@@ -78,7 +87,9 @@ export async function getPastPendingLeaveForAEmployee(req: FastifyRequest<{ Para
             res.send(pendingLeave)
         }
     } catch (err) {
-        res.send(new DataBaseError("error finding pending leaves").toJSON())
+        const error = new DataBaseError("error finding pending leaves\n")
+        res.send(error.toJSON())
+        await log.publish(Buffer.from(JSON.stringify(error)));
     }
     return res
 }
@@ -88,8 +99,9 @@ export async function getAllPendingLeaveForAEmployee(req: FastifyRequest<{ Param
         const pendingLeave = await PendingLeave.find({ employeeId: req.params.employeeId });
         res.send(pendingLeave ? pendingLeave : [])
     } catch (err) {
-        console.log(err)
-        res.send(new DataBaseError("error finding pending leaves").toJSON())
+        const error = new DataBaseError("error finding pending leaves\n")
+        res.send(error.toJSON())
+        await log.publish(Buffer.from(JSON.stringify(error)));
     }
     return res
 }
@@ -103,7 +115,7 @@ export async function addPendingLeave(req: FastifyRequest<{ Body: IPendingLeave 
                 employeeName: checkDaysOff.name,
                 employeeEmail: checkDaysOff.email,
             }
-            console.log(employee)
+
             const pendingLeave= await new PendingLeave(employee).save();
             if (!pendingLeave) {
                 res.send(new ProcessingError('pending leave can\'t be submitted').toJSON())
@@ -114,7 +126,9 @@ export async function addPendingLeave(req: FastifyRequest<{ Body: IPendingLeave 
             res.send(new ProcessingError('not enough days').toJSON())
         }
     } catch (err) {
-        res.send(new DataBaseError("error adding new pending leave").toJSON())
+        const error = new DataBaseError("error adding new pending leave\n")
+        res.send(error.toJSON())
+        await log.publish(Buffer.from(JSON.stringify(error)));
     }
     return res
 }
@@ -130,7 +144,9 @@ export async function deletePendingLeaveById(req: FastifyRequest<{ Params: { id:
             res.send(status)
         }
     } catch (err) {
-        res.send(new DataBaseError("error deleting pending leave").toJSON())
+        const error = new DataBaseError("error deleting pending leave\n")
+        res.send(error.toJSON())
+        await log.publish(Buffer.from(JSON.stringify(error)));
     }
     return res
 }
@@ -146,7 +162,9 @@ export async function updatePendingLeaveById(req: FastifyRequest<{ Params: { id:
             res.send(status)
         }
     } catch (err) {
-        res.send(new DataBaseError("error updating pending leave").toJSON())
+        const error = new DataBaseError("error updating pending leave\n")
+        res.send(error.toJSON())
+        await log.publish(Buffer.from(JSON.stringify(error)));
     }
     return res
 }

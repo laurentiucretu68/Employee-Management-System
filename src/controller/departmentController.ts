@@ -3,6 +3,7 @@
 import { IDepartment, Department } from "../model/department"
 import { FastifyReply, FastifyRequest } from "fastify";
 import { DataBaseError, ProcessingError } from "../util/errors";
+import {log} from "../util/amqp";
 
 
 export async function getDepartmentById(req: FastifyRequest<{ Params: { id: string }}>, res: FastifyReply) {
@@ -11,7 +12,9 @@ export async function getDepartmentById(req: FastifyRequest<{ Params: { id: stri
         const { id } = req.params;
         department = await Department.findById({ _id: id });
     } catch (err) {
-        throw new DataBaseError("error finding department")
+        const error = new DataBaseError("error finding department\n")
+        res.send(error.toJSON())
+        await log.publish(Buffer.from(JSON.stringify(error)));
     }
 
     if (!department) {
@@ -26,7 +29,9 @@ export async function getDepartments(req: FastifyRequest, res: FastifyReply) {
     try {
         departments = await Department.find();
     } catch (err) {
-        throw new DataBaseError("error finding departments")
+        const error = new DataBaseError("error finding departments\n")
+        res.send(error.toJSON())
+        await log.publish(Buffer.from(JSON.stringify(error)));
     }
 
     if (!departments) {
@@ -49,7 +54,9 @@ export async function addDepartment(req: FastifyRequest<{ Body: IDepartment }>, 
         }
         res.send(department)
     } catch (err) {
-        throw new DataBaseError("error adding new department")
+        const error = new DataBaseError("error adding new department\n")
+        res.send(error.toJSON())
+        await log.publish(Buffer.from(JSON.stringify(error)));
     }
     return res
 }
@@ -60,7 +67,9 @@ export async function deleteDepartmentById(req: FastifyRequest<{ Params: { id: s
         const { id } = req.params;
         status = await Department.deleteOne({ _id: id });
     } catch (err) {
-        throw new DataBaseError("error deleting department")
+        const error = new DataBaseError("error deleting department\n")
+        res.send(error.toJSON())
+        await log.publish(Buffer.from(JSON.stringify(error)));
     }
 
     if (!status) {
@@ -76,7 +85,9 @@ export async function updateDepartmentById(req: FastifyRequest<{ Params: { id: s
         const { id } = req.params;
         status = await Department.updateOne({ _id: id }, { $set: req.body });
     } catch (err) {
-        res.send(new DataBaseError("error updating department").toJSON())
+        const error = new DataBaseError("error updating department\n")
+        res.send(error.toJSON())
+        await log.publish(Buffer.from(JSON.stringify(error)));
     }
 
     if (!status) {

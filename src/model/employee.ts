@@ -48,8 +48,7 @@ export const employeeSchema = new Schema<IEmployee>({
         required: true
     },
     daysOff: {
-        type: Number,
-        required: true
+        type: Number
     }
 });
 
