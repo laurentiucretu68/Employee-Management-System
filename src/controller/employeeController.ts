@@ -49,7 +49,8 @@ export async function addEmployee(req: FastifyRequest<{ Body: IEmployee }>, res:
             res.send(new ProcessingError("Department doesn't exist").toJSON())
         } else {
             req.body.password = encryptPassword(req.body.password)
-            const employee =  await new Employee(req.body).save();
+            const daysOff = (12 - new Date().getMonth()) * 3;
+            const employee =  await new Employee({ ...req.body, daysOff}).save();
 
             if (!employee) {
                 res.send(new ProcessingError("user cannot be inserted").toJSON())
