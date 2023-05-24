@@ -36,7 +36,7 @@ export async function loginAdmin(this: FastifyInstance, req: FastifyRequest<{ Bo
             const response = await redis.set(email, tokenJWT, 'EX', 300 * 60);
 
             if (response) {
-                res.send({ tokenJWT });
+                res.send(tokenJWT);
             } else {
                 res.send(new ProcessingError('Login failed').toJSON());
             }
