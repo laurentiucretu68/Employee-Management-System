@@ -7,7 +7,7 @@ import { departmentRouter } from "../routes/departmentRouter";
 import {pendingLeaveRouter} from "../routes/pendingLeaveRouter";
 import { IAdmin } from "../model/admin";
 import { IEmployee } from "../model/employee";
-import {adminRouter} from "../routes/adminRouter";
+import { adminRouter } from "../routes/adminRouter";
 import cors from "@fastify/cors";
 
 
@@ -51,5 +51,5 @@ export async function fastifyRegisters(fastify: FastifyInstance) {
     fastify.register(adminRouter);
     fastify.register(employeeRouter);
     fastify.register(departmentRouter);
-    fastify.register(pendingLeaveRouter)
+    fastify.register(pendingLeaveRouter);
 }
